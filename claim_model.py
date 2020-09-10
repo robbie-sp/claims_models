@@ -3,8 +3,10 @@ import numpy as np
 import scipy.stats as stats
 import seaborn as sns
 import matplotlib.pyplot as plt
-from cmdstanpy import CmdStanModel
+import cmdstanpy
 import os
+
+cmdstanpy.utils.cxx_toolchain_path()
 
 #%% [markdown]
 ## Generate Claims
@@ -62,9 +64,12 @@ for sample in range(samples):
     ax.plot(x, prior_dist.pdf(x), 'r-', alpha=0.05)
 
 
-#%% calculate posterior
+#%%
+# Build Model
 
-model = CmdStanModel(stan_file='model_1.stan')
+file_path = os.path.join(os.getcwd(), 'model_1.stan')
+
+model = cmdstanpy.CmdStanModel(stan_file=file_path)
 model.name
 model.stan_file
 model.exe_file
@@ -72,6 +77,7 @@ print(model.code())
 
 
 #%%
+# Sample
 stan_data = {
     'N': claims.shape[0],
     'claims': claims.tolist()
@@ -94,3 +100,5 @@ print(fit.diagnose())
 # add cat
 # add variate
 # add time
+
+# %%
